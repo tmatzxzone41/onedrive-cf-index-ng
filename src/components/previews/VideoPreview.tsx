@@ -168,10 +168,22 @@ const VideoPreview: FC<{ file: OdFileObject }> = ({ file }) => {
             btnImage="/players/nplayer.png"
           />
           <DownloadButton
-            onClickCallback={() => window.open(`intent://${getBaseUrl()}${videoUrl}#Intent;type=video/any;package=is.xyz.mpv;scheme=https;end;`)}
-            btnText="mpv-android"
-            btnImage="/players/mpv-android.png"
-          />
+            onClickCallback={() => {
+              const absolute = new URL(videoUrl, getBaseUrl()).toString()
+              try {
+                const u = new URL(absolute)
+                const scheme = u.protocol.replace(':', '')
+                const intentUrl =
+                  `intent://${u.host}${u.pathname}${u.search}${u.hash}` +
+                  `#Intent;scheme=${scheme};package=is.xyz.mpv;action=android.intent.action.VIEW;type=video/*;end`
+                window.open(intentUrl)
+              } catch {
+                window.open(absolute)
+                  }
+              }}
+              btnText="mpv-android"
+              btnImage="/players/mpv-android.png"
+           />
         </div>
       </DownloadBtnContainer>
     </>
